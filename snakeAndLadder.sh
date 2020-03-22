@@ -9,54 +9,68 @@ WINNING_POSITION=100
 
 #Variable
 position=0
+dieCountForPlayer1=0
+dieCountForPlayer2=0
+positionForPlayer1=0
+positionForPlayer2=0
 
 echo "Snake And Ladder Game"
 #Random Function for roll the die from 1 to 6.
-#Winning Condition
-while(($position!=$WINNING_POSITION))
-do
-	player=$((RANDOM%6+1))
-	echo "Outcomes are" $player
+player=$((RANDOM%6+1))
+echo "Outcomes are" $player
 
-	case $((RANDOM%3)) in
+#Winning condition
+function PlayGame(){
+	position=$1
+case $((RANDOM%3)) in
+
 		#No play the player stays in the same position
 		0)
-			echo "Current position is: "$position
-			echo "you stay in same position: "$position
 			position=$position 
-			echo " " ;;
+			 ;;
 
 		#Ladder
 		1)
-			echo "Current position is: "$position
-			echo "You encountered a ladder"
-		
-			#Exact winning position
-			if (( $((position+player))>100 ))
-			then
-				position=$position
-				echo "Current position is: "$position
-			else
+		#Exact winning position
+		if (( $((position+player))>100 ))
+		then
+			position=$position
+		else
 				position=$((position+player))
-				echo "Player Ladder moves ahead: "$position 
+				position=$position 
 			fi
-				echo " "  ;;
-		
+		 ;;
+
 		#Snake
 		2)
-			echo "You encountered snake"
-			echo "Current position is: "$position
-		
-			#Exact winning position.
-			if (($position<0))
-			then
-				echo "Player Snake moves behind: "$POSITION
-				position=$POSITION
-			else
-				position=$((position-player))
-				echo "Player moves behind: "$position
-				position=$position
-			fi 
-			echo " " ;;
+		#Exact restart position.
+		if (($position>$player))
+		then
+			position=$((position-player))
+			Position=$position
+		else
+			position=$position
+		fi
+		;;
 	esac
+	echo $position
+}
+
+#play till 100
+while [[ $positionForPlayer1 -ne $WINNING_POSITION && $positionForPlayer2 -ne $WINNING_POSITION ]]
+do
+	((dieCountForPlayer1++))
+	positionForPlayer1="$(PlayGame $positionForPlayer1)"
+	echo "player 1 die count $dieCountForPlayer1 : Position $positionForPlayer1"
+
+	((dieCountForPlayer2++))
+   positionForPlayer2="$(PlayGame $positionForPlayer2)" 
+   echo "player 2 die count $dieCountForPlayer2 : Position $positionForPlayer2"
 done
+
+if(($positionForPlayer1==$WINNING_POSITION))
+then
+	echo "Player 1 Won. You rolled the die for $dieCountForPlayer1 times"
+else
+	echo "Player 2 Won. You rolled the die for $dieCountForPlayer2 times"
+fi
